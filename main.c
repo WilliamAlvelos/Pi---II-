@@ -16,9 +16,6 @@ const int ALTURA_TELA = 700;
 
 ALLEGRO_DISPLAY *janela = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
-// testando com vetor ALLEGRO_BITMAP *w[2];
-ALLEGRO_BITMAP *fundo = NULL;
-ALLEGRO_BITMAP *fundo2 = NULL;
 ALLEGRO_FONT *fonte = NULL;
 ALLEGRO_BITMAP *erro1 = NULL;
 ALLEGRO_BITMAP *carro = NULL;
@@ -29,36 +26,33 @@ ALLEGRO_BITMAP *carro_batida = NULL;
 ALLEGRO_BITMAP *batida_esq = NULL;
 ALLEGRO_BITMAP *batida_dir = NULL;
 ALLEGRO_BITMAP *batida_down = NULL;
-
+ALLEGRO_BITMAP *fundo[3];
 
 
 char str[TAMANHO][TAMANHO];
 
     int manipular_entrada(ALLEGRO_EVENT evento, int linha);
     void exibir_texto_centralizado();
-    void tela2 (int x, int y, int estado_carro, bool sair);
-    void tela1 (int x, int y, int estado_carro, bool sair);
     bool inicializar();
     int esta_vazia(char (*matriz)[TAMANHO]);
     int ultima_linha(char (*matriz)[TAMANHO]);
-    void finalizar();
-    void error_tela1(int x, int y, int estado_carro);
-    void comando_teclado(int x, int y, int estado_carro, bool sair);
-    void troca_tela(int x , int y, int estado_carro, bool sair);
+    void finalizar(int i);
+    void error_tela(int x, int y, int estado_carro, int i);
+    void comando_teclado(int x, int y, int estado_carro, bool sair, int i);
 
 
 
-    int avanca(int quantidade, int x, int y, int estado_carro){
+
+    int avanca(int quantidade, int x, int y, int estado_carro, int i){
         int cima;
             
         if(estado_carro == 1){
 
             cima = x;
                  while(x>=cima-(100*quantidade)){
-                    al_draw_bitmap(fundo, 0, 0, 0);
+                    al_draw_bitmap(fundo[i], 0, 0, 0);
                     al_draw_bitmap(carro, y, x, 0);
-                    error_tela1(x, y, estado_carro);
-                    troca_tela(x , y, estado_carro, false);
+                    error_tela(x, y, estado_carro, i);
                     x--;
                     al_flip_display();
                     al_rest(0.01);
@@ -72,10 +66,9 @@ char str[TAMANHO][TAMANHO];
 
             cima = x;
                  while(x>=cima-(100*quantidade)){
-                    al_draw_bitmap(fundo, 0, 0, 0);
+                    al_draw_bitmap(fundo[i], 0, 0, 0);
                     al_draw_bitmap(carro_down, y, x, 0);
-                    error_tela1(x, y, estado_carro);
-                    troca_tela(x , y, estado_carro, false);
+                    error_tela(x, y, estado_carro, i);
                     x++;
                     al_flip_display();
                     al_rest(0.01);
@@ -90,10 +83,9 @@ char str[TAMANHO][TAMANHO];
 
                         cima = y;        
                         while(y>=cima-(100*quantidade)){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_esq, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             y--;
                             al_flip_display();
                             al_rest(0.01);
@@ -106,10 +98,9 @@ char str[TAMANHO][TAMANHO];
 
                         cima = y;        
                         while(y<=cima+(100*quantidade)){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_dir, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             y++;
                             al_flip_display();
                             al_rest(0.01);
@@ -122,7 +113,7 @@ char str[TAMANHO][TAMANHO];
      }
     
 
-    int vira(int lado, int x, int y, int estado_carro){
+    int vira(int lado, int x, int y, int estado_carro, int i){
         //mesma coisa ele so faz a curva conforme o lado que foi solicitado
         //queria criar um struct paara armazenar melhores os valores de x e y mais assim da para fazer tmb
             if (lado == 1){
@@ -132,10 +123,9 @@ char str[TAMANHO][TAMANHO];
                 //estado_carro = 1 cima // =2 baixo // =3 direita // =4 esqeurda
             if(estado_carro == 1){
                 //while(y>=esq-100){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_dir, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             //y--;
                             al_flip_display();
                             al_rest(0.01);
@@ -144,29 +134,26 @@ char str[TAMANHO][TAMANHO];
                 return estado_carro;
             }
             if(estado_carro ==2){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_esq, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             al_flip_display();
                             estado_carro = 4;
                             return estado_carro;
             }
 
             if(estado_carro == 3){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_down, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             al_flip_display();
                             estado_carro = 2;
                             return estado_carro;
             }
             if(estado_carro == 4){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             al_flip_display();
                             estado_carro = 1;
                             return estado_carro;
@@ -177,10 +164,9 @@ char str[TAMANHO][TAMANHO];
                  //dir = y;
                   if(estado_carro == 1){
                      //   while(y<=dir+100){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_esq, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                        //     y++;
                             al_flip_display();
                          //   al_rest(0.01);
@@ -189,29 +175,26 @@ char str[TAMANHO][TAMANHO];
                         } 
                 //return y;  
                     if(estado_carro ==2){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_dir, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             al_flip_display();
                             estado_carro = 3;
                             return estado_carro;
                          }
 
                     if(estado_carro == 3){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             al_flip_display();
                             estado_carro = 1;
                             return estado_carro;
                          }
                      if(estado_carro == 4){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_down, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             al_flip_display();
                             estado_carro = 2;
                             return estado_carro;
@@ -224,17 +207,16 @@ char str[TAMANHO][TAMANHO];
 
 
 
-    int retorna(int quantidade, int x, int y, int estado_carro){
+    int retorna(int quantidade, int x, int y, int estado_carro, int i){
         //cara aqui eu nao sei oq comentar ahaha so mandei chamar aqui quando no seu compilador ele retorna aqui to vendo formas de melhorar ainda 
         int baixo;
             baixo = x;
                     if(estado_carro == 1){
                         while(x<=baixo+(100*quantidade)){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_down, y, x, 0);
                             estado_carro=2;
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             x++;
                             al_flip_display();
                             al_rest(0.01);
@@ -246,11 +228,10 @@ char str[TAMANHO][TAMANHO];
 
     if(estado_carro == 2){
                         while(x>=baixo-(100*quantidade)){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro, y, x, 0);
                             estado_carro=1;
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             x--;
                             al_flip_display();
                             al_rest(0.01);
@@ -265,10 +246,9 @@ char str[TAMANHO][TAMANHO];
 
                         baixo = y;        
                         while(y>=baixo-(100*quantidade)){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_dir, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             y--;
                             al_flip_display();
                             al_rest(0.01);
@@ -282,10 +262,9 @@ char str[TAMANHO][TAMANHO];
 
                         baixo = y;        
                         while(y<=baixo+(100*quantidade)){
-                            al_draw_bitmap(fundo, 0, 0, 0);
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
                             al_draw_bitmap(carro_dir, y, x, 0);
-                            error_tela1(x, y, estado_carro);
-                            troca_tela(x , y, estado_carro, false);
+                            error_tela(x, y, estado_carro, i);
                             y++;
                             al_flip_display();
                             al_rest(0.01);
@@ -297,48 +276,49 @@ char str[TAMANHO][TAMANHO];
     return x;
 }
 
-    void error_tela1(int x, int y, int estado_carro){
+    void error_tela(int x, int y, int estado_carro, int i){
         //detecçao de colisao melhorar futuramente
+    if(i == 1){
          if((y <= 250) ||  (y >= 350 && y <= 850 && x >= 480) || (y >= 950 && x >= 380) || (x <= 180 && y >= 750) || (y <= 650 && x <= 180 && y >= 350) || (y>=350 && y<=850 && x >=280 && x <= 380)){
 
                                 if(estado_carro == 1){
-                                    al_draw_bitmap(fundo, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(carro_batida, y, x, 0);
                                     al_flip_display();
                                          if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
                                             //tela1(630, 300, estado_carro, false);
                                             //al_destroy_display(janela);
-                                            comando_teclado(x, y, 1, false);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
                                 }
                                 if(estado_carro == 2){
-                                    al_draw_bitmap(fundo, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(batida_down, y, x, 0);
                                     al_flip_display();
                                          if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
                                             //tela1(630, 300, estado_carro, false);
-                                            comando_teclado(x, y, 1, false);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
                                 }
 
                                 if(estado_carro == 3){
-                                    al_draw_bitmap(fundo, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(batida_dir, y, x, 0);
                                     al_flip_display();
                                         if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
                                             //tela1(630, 300, estado_carro, false);
                                             //al_destroy_display(janela);
-                                            comando_teclado(x, y, 1, false);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
                                 }
                                 else{
-                                    al_draw_bitmap(fundo, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(batida_esq, y, x, 0);
                                     al_flip_display();
                                         if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
                                             //tela1(630, 300, estado_carro, false);
                                             //al_destroy_display(janela);
-                                            comando_teclado(x, y, 1, false);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
 
                                 }
@@ -347,62 +327,59 @@ char str[TAMANHO][TAMANHO];
     }
 
 
+    if(i == 2){
 
-    void error_tela2(int x, int y, int estado_carro){
-        // se o valor de x e y na tela 2 forem esse detecta colisao, podemos aprimorar futuramente mais o objetivo agora nao é esse
-        //nessa semana nao pelo menos
-         if((y<259) || (x< 250 && y > 350 && y < 550) || (x < 250 && y > 650)){
+                         if((y<259) || (x< 250 && y > 350 && y < 550) || (x < 250 && y > 650)){
 
                                 if(estado_carro == 1){
-                                    al_draw_bitmap(fundo2, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(carro_batida, y, x, 0);
                                     al_flip_display();
                                          if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
-                                            tela2(630, 300, estado_carro, false);
-                                            al_destroy_display(janela);
+                                            comando_teclado(630, 300, 1, false, i);
+
                                             
                                             }
                                 }
                                 if(estado_carro == 2){
-                                    al_draw_bitmap(fundo2, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(batida_down, y, x, 0);
                                     al_flip_display();
                                          if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
-                                            tela2(630, 300, estado_carro, false);
-                                            al_destroy_display(janela);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
                                 }
 
                                 if(estado_carro == 3){
-                                    al_draw_bitmap(fundo2, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(batida_dir, y, x, 0);
                                     al_flip_display();
                                         if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
-                                            tela2(630, 300, estado_carro, false);
-                                            al_destroy_display(janela);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
                                 }
                                 else{
-                                    al_draw_bitmap(fundo2, 0, 0, 0);
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_draw_bitmap(batida_esq, y, x, 0);
                                     al_flip_display();
                                         if (al_show_native_message_box(janela, "Voce Bateu o carro! ","Pergunta:", "O jogo ira ser reniciado",NULL, ALLEGRO_MESSAGEBOX_WARN)){
-                                            tela2(630, 300, estado_carro, false);
-                                            al_destroy_display(janela);
+                                            comando_teclado(630, 300, 1, false, i);
                                             }
 
                                 }
                         }
 
     }
+}
+
 
 
     
-void comando_teclado (int x, int y, int estado_carro, bool sair){
+void comando_teclado (int x, int y, int estado_carro, bool sair, int i){
     int linha = 0;
     int tela = 2;//constante para saber em qual tela ele esta
     //carrega o fundo
-    al_draw_bitmap(fundo, 0, 0, 0);
+    al_draw_bitmap(fundo[i], 0, 0, 0);
     al_draw_bitmap(carro, y, x, 0);
     al_flip_display();
 
@@ -445,7 +422,16 @@ void comando_teclado (int x, int y, int estado_carro, bool sair){
                  }
             switch(tela){    
             case 1:
-                    // caso tela 1 nao faz nada pq ela ainda nao existe seria a tela em cima da incial
+            if (evento.type == ALLEGRO_EVENT_KEY_UP){
+                if(evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
+                {
+                                    // caso ele esteja na tela 2 e clica para baixo ai coloca a constante de tela = 3 e imprime o fundo2
+                                    i++;
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
+                                    al_flip_display();
+                                    tela=2;
+                }
+            }
             break;
 
             case 2:      
@@ -453,11 +439,21 @@ void comando_teclado (int x, int y, int estado_carro, bool sair){
                 if(evento.keyboard.keycode == ALLEGRO_KEY_DOWN)
                 {
                                     // caso ele esteja na tela 2 e clica para baixo ai coloca a constante de tela = 3 e imprime o fundo2
-                                    al_draw_bitmap(fundo2, 0, 0, 0);
+                                    i++;
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_flip_display();
                                     tela=3;
                 }
-                else if((evento.keyboard.keycode == ALLEGRO_KEY_UP || (evento.keyboard.keycode == ALLEGRO_KEY_RIGHT || (evento.keyboard.keycode == ALLEGRO_KEY_LEFT)))){
+
+                if(evento.keyboard.keycode == ALLEGRO_KEY_UP)
+                {
+                                    // caso ele esteja na tela 2 e clica para baixo ai coloca a constante de tela = 3 e imprime o fundo2
+                                    i--;
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
+                                    al_flip_display();
+                                    tela=1;
+                }
+                else if((evento.keyboard.keycode == ALLEGRO_KEY_RIGHT || (evento.keyboard.keycode == ALLEGRO_KEY_LEFT))){
                         al_show_native_message_box(janela, "ERROR 404","Pergunta:", "MAPA NAO DEFINIDO",NULL, ALLEGRO_MESSAGEBOX_WARN);
 
                         //se ele fazer outro comando para ainda nao definido
@@ -472,7 +468,8 @@ void comando_teclado (int x, int y, int estado_carro, bool sair){
                 if(evento.keyboard.keycode == ALLEGRO_KEY_UP)
                 {
                                     //caso tela == 3 imprime o fundo coloca a constante igual a 2
-                                    al_draw_bitmap(fundo, 0, 0, 0);
+                                    i--;
+                                    al_draw_bitmap(fundo[i], 0, 0, 0);
                                     al_flip_display();
                                     tela=2;
                 }
@@ -497,31 +494,36 @@ void comando_teclado (int x, int y, int estado_carro, bool sair){
                 }
             }
 
-    void troca_tela (int x, int y, int estado_carro, bool sair){
-
+    int troca_tela (int x, int y, int estado_carro, int i){
+                if(i == 1){
                     if(x>ALTURA_TELA && y == 300){
                             x = 50;
                             y = 300;
-                            al_draw_bitmap(fundo2, 0, 0, 0);
+                            i++;
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
+                            return i;
                     }
                     else if(x>ALTURA_TELA){
                             x = 50;
-                            y = 710;
-                            al_draw_bitmap(fundo2, 0, 0, 0);
-                            tela2(x, y, estado_carro, sair);
+                             y = 710;
+                            i++;
+                            al_draw_bitmap(fundo[i], 0, 0, 0);
+                            al_flip_display();
+                             return i;
                     }
 
+            }
 
-
+                    return i;
     }
 
 
 
 //nao de muito valor a ler a funacao tela 2 pois eu nao estou chamando ela no codigo so o caso do carro trocar de tela ela esta ai para aprefeicoar futuramente    
-void tela2 (int x, int y, int estado_carro, bool sair){
+/*void tela2 (int x, int y, int estado_carro, bool sair, int i){
 
 
-    al_draw_bitmap(fundo2, 0, 0, 0);
+    al_draw_bitmap(fundo[i], 0, 0, 0);
     al_draw_bitmap(carro_down, y, x, 0);
     al_flip_display();
     //roda ate o sair ser true
@@ -558,70 +560,7 @@ void tela2 (int x, int y, int estado_carro, bool sair){
                 sair = true;
             }
         }
-        //nao de valor para os trechos de codigo comentados
-        /*if (tecla)
-        {
-            al_draw_bitmap(fundo2, 0, 0, 0);
 
-            switch (tecla)
-            {
-            case 1:
-                    cima = x;
-
-                        while(x>=cima-100){
-                            al_draw_bitmap(fundo2, 0, 0, 0);
-                            al_draw_bitmap(carro, y, x, 0);
-                            x--;
-                            al_flip_display();
-                            al_rest(0.01);
-                        }
-
-                        estado_carro=1;
-                break;
-            case 2:
-                baixo = x;
-                        // se o estado do carro for para a direita este if faz ele uma animaçao para ele ficar para baixo
-                while(x<=baixo+100){
-                            al_draw_bitmap(fundo2, 0, 0, 0);
-                            al_draw_bitmap(carro_down, y, x, 0);
-                            x++;
-                            al_flip_display();
-                            al_rest(0.01);
-                        }
-
-                        estado_carro = 2;
-
-                break;
-            case 3:
-                esq = y;
-
-                while(y>=esq-100){
-                            al_draw_bitmap(fundo2, 0, 0, 0);
-                            al_draw_bitmap(carro_esq, y, x, 0);
-                            y--;
-                            al_flip_display();
-                            al_rest(0.01);
-                        }
-
-                         estado_carro = 3;
-                break;
-            case 4:
-
-                
-                        dir = y;
-                        while(y<=dir+100){
-                            al_draw_bitmap(fundo2, 0, 0, 0);
-                            al_draw_bitmap(carro_dir, y, x, 0);
-                            y++;
-                            al_flip_display();
-                            al_rest(0.01);
-                        }
-                         estado_carro = 4;
-
-                break;
-            }
-
-            tecla = 0;*/
 
              if(x < 0 && y < 400){
                             x = 630;
@@ -639,7 +578,7 @@ void tela2 (int x, int y, int estado_carro, bool sair){
         al_flip_display();
     }
 
-
+*/
 
 
 int main(void)
@@ -649,18 +588,13 @@ int main(void)
     int y = 300;//horisontal
     int linha = 0;
     strcpy(str[linha], "");
-    int i = 0;
-
-    // testando mostrar a imagem do vetor al_draw_bitmap(w[1], 0 , 0 , 0);
-    // al_flip_display();
-
     if (!inicializar())
     {
         return -1;
     }
 
         //chama a funcao comando tecla que serve para o usuario trocar as telas sem mecher o carro para ele visualizar melhor o cenario 
-        comando_teclado(x, y, 1, sair);
+        comando_teclado(x, y, 1, sair, 1);
     //destroi as janelas
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
@@ -711,8 +645,9 @@ bool inicializar()
         return false;
     }
     //carrega as imagens
-    fundo2 = al_load_bitmap("fase2.png");
-    fundo = al_load_bitmap("fase1.png");
+    fundo[0] = al_load_bitmap("fase0.png");
+    fundo[1] = al_load_bitmap("fase1.png");
+    fundo[2] = al_load_bitmap("fase2.png");
     carro = al_load_bitmap("carro.png");
     carro_dir = al_load_bitmap("carro_dir.png");
     carro_esq = al_load_bitmap("carro_esq.png");
@@ -721,9 +656,9 @@ bool inicializar()
     batida_dir = al_load_bitmap("batida_dir.png");
     batida_down = al_load_bitmap("batida_down.png");
     carro_down = al_load_bitmap("carro_dow.png");
-    // carregando a image w[1] = al_load_bitmap("Cenario.png");
 
-    if (!fundo)
+
+    if (!fundo[1])
     {   
         fprintf(stderr, "Falha ao carregar imagem de fundo.\n");
         al_destroy_display(janela);
@@ -737,9 +672,9 @@ bool inicializar()
     return true;
 }
 
-void finalizar()
+void finalizar(int i)
 {
-    al_destroy_bitmap(fundo);
+    al_destroy_bitmap(fundo[i]);
     al_destroy_font(fonte);
     al_destroy_event_queue(fila_eventos);
     al_destroy_display(janela);
