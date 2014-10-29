@@ -16,7 +16,7 @@ const int ALTURA_TELA = 700;
 
 ALLEGRO_DISPLAY *janela = NULL;
 ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
-ALLEGRO_BITMAP *w[2];
+// testando com vetor ALLEGRO_BITMAP *w[2];
 ALLEGRO_BITMAP *fundo = NULL;
 ALLEGRO_BITMAP *fundo2 = NULL;
 ALLEGRO_FONT *fonte = NULL;
@@ -651,11 +651,9 @@ int main(void)
     strcpy(str[linha], "");
     int i = 0;
 
-    al_draw_bitmap(w[1], 0 , 0 , 0);
-    al_flip_display();
-    al_rest(5.0);
-    i++;
-    al_flip_display();
+    // testando mostrar a imagem do vetor al_draw_bitmap(w[1], 0 , 0 , 0);
+    // al_flip_display();
+
     if (!inicializar())
     {
         return -1;
@@ -723,7 +721,7 @@ bool inicializar()
     batida_dir = al_load_bitmap("batida_dir.png");
     batida_down = al_load_bitmap("batida_down.png");
     carro_down = al_load_bitmap("carro_dow.png");
-    w[1] = al_load_bitmap("Cenario.png");
+    // carregando a image w[1] = al_load_bitmap("Cenario.png");
 
     if (!fundo)
     {   
