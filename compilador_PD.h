@@ -14,8 +14,9 @@ int EXECUTA_COMPILADOR(char []);
 void imprime_string(char frase[]);
 
 //--------------------- FUNÇÕES ANALÍTICAS DO COMPILADOR -------------------------------------------
-int avanca(int, int, int, int);
-int vira(int, int, int, int);
-int retorna(int, int, int, int);
+int avanca(int, int, int, int, int);
+int vira(int, int, int, int, int);
+int retorna(int, int, int, int, int);
+int troca_tela(int, int, int, int);
 
 #endif
