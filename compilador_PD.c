@@ -21,11 +21,6 @@ typedef struct{
 }coordenadas;
 
 
-//---------------------------- Carro --------------------------------------//
-
-
-
-
 //---------------------------- FUNÇÕES UTILITÁRIAS DO COMPILADOR --------------------------------------//
 
 /*Função que retorna o tamanho de um vetor*/
